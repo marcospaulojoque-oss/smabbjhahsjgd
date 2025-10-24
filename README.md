@@ -334,50 +334,95 @@ Para mais detalhes, consulte [DOCKER.md](./DOCKER.md).
 
 ### Opções de Deployment
 
-1. **Docker (Recomendado)**
-   - Reprodutível
-   - Isolado
-   - Fácil deployment
+1. **Docker Local (Desenvolvimento)**
+   - Rápido e fácil
+   - Ambiente isolado
+   - Ideal para testes
 
-2. **Servidor Tradicional**
+2. **VPS Hostinger (Produção)**
+   - IP: `72.60.148.222`
+   - Deploy automatizado
+   - Scripts prontos
+
+3. **Servidor Tradicional**
    - Requer Python 3.11+
    - Configurar manualmente dependências
    - Verificar CORS
 
+### 🌐 Deploy na VPS Hostinger
+
+#### Deploy Automatizado (Recomendado)
+
+```bash
+# 1. Clonar repositório
+git clone https://github.com/marcospaulojoque-oss/smabbjhahsjgd.git
+cd smabbjhahsjgd
+
+# 2. Executar deploy completo
+./deploy-all.sh
+
+# 3. Acessar aplicação
+http://72.60.148.222
+```
+
+#### Scripts Disponíveis
+
+| Script | Função |
+|--------|--------|
+| `deploy-all.sh` | Deploy completo automatizado |
+| `deploy-vps.sh` | Deploy com opções manuais |
+| `build.sh` | Build local Docker |
+
+#### Comandos Úteis
+
+```bash
+# Ver status na VPS
+./deploy-vps.sh status
+
+# Ver logs
+./deploy-vps.sh logs
+
+# Reiniciar aplicação
+./deploy-vps.sh restart
+
+# Atualizar deploy
+./deploy-vps.sh update
+```
+
 ### Production Checklist
 
-- [ ] Configurar variáveis de ambiente
-- [ ] Usar HTTPS
+- [ ] Configurar variáveis de ambiente (.env)
+- [ ] Usar HTTPS (SSL/TLS)
 - [ ] Configurar backup
 - [ ] Monitoramento e logs
 - [ ] Rate limiting
-- [ ] Firewall
+- [ ] Firewall configurado
 
 ### Ambiente de Produção
 
-1. **Servidor Requirements**
+1. **VPS Requirements**
    - 1 CPU core
    - 1GB RAM
-   - 10GB disco
+   - 10GB disco SSD
 
-2. **Configuração**
+2. **Deploy Completo**
    ```bash
    # Clonar repositório
    git clone https://github.com/marcospaulojoque-oss/smabbjhahsjgd.git
    cd smabbjhahsjgd
 
-   # Configurar ambiente
-   cp .env.example .env
-   # Editar .env com credenciais reais
+   # Deploy automático
+   ./deploy-all.sh auto
 
-   # Iniciar produção
-   make prod
+   # Ou interativo
+   ./deploy-all.sh
    ```
 
-3. **SSL/TLS com Nginx**
-   - Colocar certificados em `nginx/ssl/`
-   - Descomentar configuração HTTPS
-   - Reiniciar containers
+3. **SSL/TLS com Let's Encrypt**
+   ```bash
+   # Apontar domínio para 72.60.148.222
+   ./deploy-vps.sh ssl
+   ```
 
 ---
 
