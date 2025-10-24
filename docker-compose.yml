@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Servidor Web da Aplicação Monjaro
+  monjaro-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_DATE=${BUILD_DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}
+    container_name: monjaro-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      - PORT=8000
+      - KOREPAY_SECRET_KEY=${KOREPAY_SECRET_KEY:-YOUR_SECRET_KEY_HERE}
+      - KOREPAY_RANDOM_KEY=${KOREPAY_RANDOM_KEY:-YOUR_RANDOM_KEY_HERE}
+      - KOREPAY_SIMULATION_MODE=${KOREPAY_SIMULATION_MODE:-false}
+      - CPF_API_TOKEN=${CPF_API_TOKEN:-e3bd2312d93dca38d2003095196a09c2}
+    volumes:
+      # Montar volume para logs (se necessário)
+      - ./logs:/app/logs
+    networks:
+      - monjaro-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx Reverse Proxy (Opcional - para produção)
+  nginx:
+    image: nginx:alpine
+    container_name: monjaro-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Para SSL (produção)
+      # - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - monjaro-app
+    networks:
+      - monjaro-network
+    profiles:
+      - production
+
+networks:
+  monjaro-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  monjaro-logs:
+    driver: local

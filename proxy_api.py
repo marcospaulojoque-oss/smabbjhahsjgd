@@ -20,10 +20,18 @@ KOREPAY_RANDOM_KEY = "YOUR_RANDOM_KEY_HERE"
 # Define como True para usar PIX simulado quando credenciais reais falharem
 KOREPAY_SIMULATION_MODE = False  # ✅ DESATIVADO - Credenciais válidas configuradas!
 
-# IMPORTANTE: Para produção, mova estas credenciais para variáveis de ambiente:
-# import os
-# KOREPAY_SECRET_KEY = os.environ.get('KOREPAY_SECRET_KEY', '')
-# KOREPAY_RANDOM_KEY = os.environ.get('KOREPAY_RANDOM_KEY', '')
+# IMPORTANTE: Para produção, use variáveis de ambiente (Docker):
+import os
+
+# Configurar credenciais das variáveis de ambiente
+# Permite override via variáveis de ambiente (Docker/.env)
+if os.environ.get('KOREPAY_SECRET_KEY'):
+    KOREPAY_SECRET_KEY = os.environ.get('KOREPAY_SECRET_KEY')
+if os.environ.get('KOREPAY_RANDOM_KEY'):
+    KOREPAY_RANDOM_KEY = os.environ.get('KOREPAY_RANDOM_KEY')
+if os.environ.get('KOREPAY_SIMULATION_MODE'):
+    KOREPAY_SIMULATION_MODE = os.environ.get('KOREPAY_SIMULATION_MODE').lower() == 'true'
+
 # ==========================================
 
 def create_basic_auth_header(api_key):

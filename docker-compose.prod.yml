@@ -1,0 +1,59 @@
+# Docker Compose para Produção
+# Uso: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  monjaro-app:
+    image: monjaro-app:latest
+    restart: always
+    environment:
+      - PORT=8000
+      - KOREPAY_SECRET_KEY=${KOREPAY_SECRET_KEY}
+      - KOREPAY_RANDOM_KEY=${KOREPAY_RANDOM_KEY}
+      - KOREPAY_SIMULATION_MODE=${KOREPAY_SIMULATION_MODE:-false}
+      - CPF_API_TOKEN=${CPF_API_TOKEN}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    extends:
+      file: docker-compose.yml
+      service: nginx
+    restart: always
+    environment:
+      - NGINX_WORKER_PROCESSES=auto
+      - NGINX_WORKER_CONNECTIONS=1024
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Backup dos logs (opcional)
+  logrotate:
+    image: blacklabelops/logrotate
+    container_name: monjaro-logrotate
+    environment:
+      - LOGS_DIRECTORIES=/app/logs
+      - LOGS_FILE_PATTERN=*.log
+      - LOGS_ROTATE_INTERVAL=daily
+      - LOGS_ROTATE_COUNT=7
+      - LOGS_COMPRESSION=gzip
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - monjaro-network
+    profiles:
+      - production

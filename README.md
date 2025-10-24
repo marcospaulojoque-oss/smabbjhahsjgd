@@ -12,6 +12,8 @@ Projeto de landing page e funil de vendas para o programa de distribuição do m
 - [Documentação](#-documentação)
 - [Características](#-características)
 - [Como Usar](#-como-usar)
+- [Docker](#-docker)
+- [Deployment](#-deployment)
 
 ---
 
@@ -273,12 +275,119 @@ O projeto inclui documentação completa:
 
 ---
 
+## 🐳 DOCKER
+
+O projeto Monjaro agora suporta Docker para deployment fácil e reproduzível!
+
+### Pré-requisitos
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+### Início Rápido com Docker
+
+1. **Build e Subir a Aplicação**
+   ```bash
+   # Usando Make (recomendado)
+   make up-build
+
+   # Ou com Docker Compose
+   docker-compose up -d --build
+   ```
+
+2. **Acessar a Aplicação**
+   - http://localhost:8000 (sem Nginx)
+   - http://localhost:80 (com Nginx em produção)
+
+3. **Comandos Úteis**
+   ```bash
+   make help          # Ver todos os comandos
+   make logs          # Ver logs
+   make down          # Parar aplicação
+   make test          # Testar aplicação
+   ```
+
+### Produção com Docker
+
+```bash
+# Com Nginx reverse proxy
+make up-prod
+
+# Ou manualmente
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml --profile production up -d
+```
+
+### Arquivos Docker Criados
+
+- `Dockerfile` - Imagem da aplicação Python
+- `docker-compose.yml` - Configuração desenvolvimento
+- `docker-compose.prod.yml` - Configuração produção
+- `.dockerignore` - Otimização de build
+- `docker-entrypoint.sh` - Script de inicialização
+- `Makefile` - Comandos automatizados
+- `DOCKER.md` - Documentação completa
+
+Para mais detalhes, consulte [DOCKER.md](./DOCKER.md).
+
+---
+
+## 🚀 DEPLOYMENT
+
+### Opções de Deployment
+
+1. **Docker (Recomendado)**
+   - Reprodutível
+   - Isolado
+   - Fácil deployment
+
+2. **Servidor Tradicional**
+   - Requer Python 3.11+
+   - Configurar manualmente dependências
+   - Verificar CORS
+
+### Production Checklist
+
+- [ ] Configurar variáveis de ambiente
+- [ ] Usar HTTPS
+- [ ] Configurar backup
+- [ ] Monitoramento e logs
+- [ ] Rate limiting
+- [ ] Firewall
+
+### Ambiente de Produção
+
+1. **Servidor Requirements**
+   - 1 CPU core
+   - 1GB RAM
+   - 10GB disco
+
+2. **Configuração**
+   ```bash
+   # Clonar repositório
+   git clone https://github.com/marcospaulojoque-oss/smabbjhahsjgd.git
+   cd smabbjhahsjgd
+
+   # Configurar ambiente
+   cp .env.example .env
+   # Editar .env com credenciais reais
+
+   # Iniciar produção
+   make prod
+   ```
+
+3. **SSL/TLS com Nginx**
+   - Colocar certificados em `nginx/ssl/`
+   - Descomentar configuração HTTPS
+   - Reiniciar containers
+
+---
+
 ## 🎯 STATUS DO PROJETO
 
 ✅ **Navegação:** 100% funcional
 ✅ **Tracking:** 0% (completamente limpo)
 ✅ **Documentação:** Completa
 ✅ **Páginas:** Todas criadas
+✅ **Docker:** Configurado e pronto
 ✅ **Testes:** Prontos para executar
 
 ---
